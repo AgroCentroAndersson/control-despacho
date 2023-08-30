@@ -6,6 +6,7 @@ use App\Mail\GrocerMailable;
 use App\Models\Grocer;
 use App\Models\Store;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Str;
 
@@ -18,6 +19,41 @@ class GrocerController extends Controller
     public function index()
     {
         return view('grocer.index');
+    }
+
+    public function validateLogin(Request $request){
+
+        $request->validate([
+            'username' => 'required|string|max:255',
+            'password' => 'required|string|max:255',
+        ]);
+
+        $grocer = Grocer::where('username', '=', $request->username)->first();
+
+        $encryptPassword = Hash::make($request->password);
+
+        if($grocer){
+            if($grocer->password == $encryptPassword){
+                return response()->json([
+                    'response' => true,
+                    'msg' => 'Bienvenido',
+                    'data' => $grocer
+                ], 200);
+            }
+            else {
+                return response()->json([
+                    'response' => false,
+                    'msg' => 'Contraseña incorrecta'
+                ], 200);
+            }
+        }
+        else {
+            return response()->json([
+                'response' => false,
+                'msg' => 'Usuario no encontrado'
+            ], 200);
+        }
+
     }
 
     /**
