@@ -14,12 +14,19 @@ class Store extends Model
         'address',
         'phone',
         'state',
-        'codeSAP'
+        'codeSAP',
+        'ubicaciones',
+        'country_id',
     ];
 
     public function grocers()
     {
         return $this->hasMany(Grocer::class);
+    }
+
+    public function country()
+    {
+        return $this->belongsTo(Country::class);
     }
 
 }

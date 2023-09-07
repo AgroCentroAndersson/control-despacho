@@ -1,7 +1,9 @@
 <?php
 
+use App\Http\Controllers\Api\ApiGrocerController;
 use App\Http\Controllers\GrocerController;
 use App\Http\Controllers\StoreController;
+use App\Http\Livewire\Country;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -21,4 +23,7 @@ Route::get('/', function () {
 
 Route::resource('store', StoreController::class);
 Route::resource('grocer', GrocerController::class);
+Route::get('paises', Country::class)->name('paises');
+
+Route::get('login', [ApiGrocerController::class, 'loginResp'])->name('login');
 

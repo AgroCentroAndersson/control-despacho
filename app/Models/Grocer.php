@@ -17,6 +17,8 @@ class Grocer extends Model
         'state',
         'password',
         'store_id',
+        'SlpCode',
+        'country_id',
     ];
 
     public function store()

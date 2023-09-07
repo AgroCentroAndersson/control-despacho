@@ -11,16 +11,14 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('grocers', function (Blueprint $table) {
+        Schema::create('stores', function (Blueprint $table) {
             $table->id();
             $table->string('name');
-            $table->string('username');
-            $table->string('email');
-            $table->string('SlpCode');
             $table->string('phone');
-            $table->string('password');
+            $table->string('address');
+            $table->unsignedInteger('codeSAP');
+            $table->boolean('ubicaciones')->default(false);
             $table->foreignId('country_id')->references('id')->on('countries');
-            $table->unsignedInteger('store_id')->references('id')->on('stores')->onDelete('cascade');
             $table->unsignedInteger('state')->default(1); // 1: Activo, 0: Inactivo
             $table->timestamps();
         });
@@ -31,6 +29,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('grocers');
+        Schema::dropIfExists('stores');
     }
 };

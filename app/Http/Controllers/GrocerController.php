@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Mail\GrocerMailable;
+use App\Models\Country;
 use App\Models\Grocer;
 use App\Models\Store;
 use Illuminate\Http\Request;
@@ -62,7 +63,8 @@ class GrocerController extends Controller
     public function create()
     {
         $stores = Store::where('state', '=', 1)->get();
-        return view('grocer.create', compact('stores'));
+        $countries = Country::all();
+        return view('grocer.create', compact('stores', 'countries'));
     }
 
     /**
@@ -75,7 +77,9 @@ class GrocerController extends Controller
             'username' => 'required|string|max:255|unique:grocers',
             'email' => 'string|max:255',
             'phone' => 'required|string|max:8',
-            'store_id' => 'required|integer',
+            'store_id' => 'required|integer|exists:stores,id',
+            'country_id' => 'required|integer|exists:countries,id',
+            'SlpCode' => 'required|string|max:255',
         ]);
 
         $password = Str::random(8);
@@ -88,6 +92,8 @@ class GrocerController extends Controller
             'phone' => $request->phone,
             'password' => $password,
             'store_id' => $request->store_id,
+            'country_id' => $request->country_id,
+            'SlpCode' => $request->SlpCode,
         ]);
 
         Mail::to($request->email)->send(new GrocerMailable($grocer, $password));

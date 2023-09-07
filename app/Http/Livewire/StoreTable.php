@@ -27,13 +27,24 @@ class StoreTable extends DataTableComponent
             Column::make("Nombre", "name")
                 ->searchable()
                 ->sortable(),
+            Column::make("Codigo SAP", "codeSAP")
+                ->searchable()
+                ->sortable(),
             Column::make("Direccion", "address")
                 ->collapseOnTablet()
+                ->searchable()
+                ->sortable(),
+            Column::make("Pais", "country.name")
                 ->searchable()
                 ->sortable(),
             Column::make("Telefono", "phone")
                 ->collapseOnTablet()
                 ->searchable()
+                ->sortable(),
+            BooleanColumn::make("Ubicaciones", "ubicaciones")
+                ->collapseOnTablet()
+                ->searchable()
+                ->setSuccessValue(true)
                 ->sortable(),
             BooleanColumn::make("Estado", "state")
                 ->collapseOnTablet()
@@ -51,6 +62,7 @@ class StoreTable extends DataTableComponent
     public function builder(): Builder
     {
         return Store::query()
+                ->with('country')
                 ->where('state', '<=', 1);
     }
 }

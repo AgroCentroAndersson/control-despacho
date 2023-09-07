@@ -2,11 +2,14 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Country;
 use App\Models\Store;
 use Illuminate\Http\Request;
+use WireUi\Traits\Actions;
 
 class StoreController extends Controller
 {
+    use Actions;
     /**
      * Display a listing of the resource.
      */
@@ -20,7 +23,8 @@ class StoreController extends Controller
      */
     public function create()
     {
-        return view('store.create');
+        $paises = Country::all();
+        return view('store.create', compact('paises'));
     }
 
     /**
@@ -29,15 +33,26 @@ class StoreController extends Controller
     public function store(Request $request)
     {
 
+        // dd($request->all());
+
         $request->validate(
             [
                 'name' => 'required',
                 'address' => 'required',
                 'phone' => 'required',
+                'country_id' => 'required|exists:countries,id',
             ]
         );
 
-        $store = Store::create($request->all());
+        // dd($request->all());
+        $store = Store::create([
+            'name' => $request->name,
+            'address' => $request->address,
+            'phone' => $request->phone,
+            'country_id' => $request->country_id,
+            'codeSAP' => $request->codeSAP,
+            'ubicaciones' => $request->ubicaciones == 'on' ? true : false,
+        ]);
 
         // session()->flash('success', 'Store created successfully!');
 
