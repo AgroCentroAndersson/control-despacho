@@ -59,7 +59,7 @@ class ConexionSAP extends Controller
 
     public function insertSAP(string $body, string $typeDocument)
     {
-
+        // return $body;
         try {
             $typeDocument = $typeDocument == 'ORDR' ? 'DeliveryNotes' : 'InventoryTransferRequest';
             $this->url = env('URL_SAP') . $typeDocument;
@@ -75,7 +75,6 @@ class ConexionSAP extends Controller
             $res = $client->sendAsync($request)->wait();
             return $res->getBody();
         } catch (Throwable $th) {
-
             return response()->json([
                 'error' => "Error al insertar en SAP"
             ], 500);

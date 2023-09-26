@@ -11,16 +11,20 @@ use App\Http\Controllers\ConexionSAP;
 class ApiDocumentDetailController extends Controller
 {
 
-    private function getConsulta(int $docEntry, string $typeDocument)
+    private function getConsulta(int $docEntry, string $typeDocument, string $whsCode)
     {
 
         $sociedad = env('DB_DATABASE_SAP', 'GT_AGROCENTRO_2016');
         $typeDocumentDetail = $typeDocument == 'Pedido' ? 'RDR1' : 'WTQ1';
 
-        $query = "Select T1.\"ItemCode\", T1.\"ItemName\", T0.\"Quantity\"
+        $query = "Select T1.\"ItemCode\", T1.\"ItemName\", T0.\"OpenQty\" as \"Quantity\"
         from $sociedad.$typeDocumentDetail T0
         inner join $sociedad.OITM T1 on T0.\"ItemCode\" = T1.\"ItemCode\"
-        where T0.\"DocEntry\" = $docEntry";
+        where T0.\"DocEntry\" = $docEntry and
+		T0.\"WhsCode\" = $whsCode
+        and T0.\"OpenQty\" > 0";
+
+        // return $query;
 
         return DB::connection('sap-hana-odbc')->select($query);
     }
@@ -42,9 +46,12 @@ class ApiDocumentDetailController extends Controller
         $request->validate([
             'docEntry' => 'required|integer',
             'typeDocument' => 'required|string',
+            'whsCode' => 'required|string',
         ]);
 
-        $documentDetail = $this->getConsulta($request->docEntry, $request->typeDocument);
+        $documentDetail = $this->getConsulta($request->docEntry, $request->typeDocument, $request->whsCode);
+
+        // return $documentDetail;
 
         return response()->json([
             'data' => $documentDetail
@@ -61,7 +68,7 @@ class ApiDocumentDetailController extends Controller
         ]);
 
         $validateProduct = $this->getValidateProduct($request->docEntry, $request->itemCode, $request->typeDocument);
-
+        // dd($validateProduct);
         // return $validateProduct;
         return response()->json(
             $validateProduct[0]->Line == 0 ? false : true,
@@ -145,8 +152,8 @@ class ApiDocumentDetailController extends Controller
             $detalles = substr($detalles, 0, -1);
             $jsonSAP = "{
                         \"CardCode\": \"$encabezado->CardCode\",
-                        \"DocDate\": \"$encabezado->DocDate\",
-                        \"DocDueDate\": \"$encabezado->DocDate\",
+                        \"DocDate\": \"".date('Y-m-d')."\",
+                        \"DocDueDate\": \"".date('Y-m-d')."\",
                         \"DocType\": \"dDocument_Items\",
                         \"DocumentLines\": [
                             $detalles
@@ -156,6 +163,8 @@ class ApiDocumentDetailController extends Controller
             // return $jsonSAP;
 
             $datos = $conexionSAP->insertSAP($jsonSAP, $typeDocument);
+
+            // dd($datos);
 
             $jsonSAP = json_decode($datos);
 

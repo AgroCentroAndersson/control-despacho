@@ -25,5 +25,7 @@ Route::get('quantity-batch', [ApiBatchController::class, 'getQuantityBatch'])->n
 
 Route::post('insert-document-details', [ApiDocumentDetailController::class, 'insertDetailDocuemts'])->name('insert_document_details.api.v1');
 
+Route::get('fechaVencimiento', [ApiBatchController::class, 'fechaVencimiento'])->name('get_quantity_batch.api.v1');
+
 
 //[{"DocEntry":168272,"DocNum":3010536,"Type":"Pedido","ItemCode":"ZPT101110GT","ItemName":"","Quantity":1.0,"Lote":"125.15.2.52"}]

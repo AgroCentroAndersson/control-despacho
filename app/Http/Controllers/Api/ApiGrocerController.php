@@ -53,7 +53,7 @@ class ApiGrocerController extends Controller
            else {
                 return response()->json([
                     'response' => false,
-                    'msg' => 'Contraseña incorrecta'
+                    'msg' => 'Password incorrecta'
                 ], 200);
            }
 
